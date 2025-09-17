@@ -1,0 +1,24 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.20;
+
+contract FlowStake {
+    mapping(address => uint256) public staked;
+    mapping(address => uint256) public derivativeBalance;
+
+    event Staked(address indexed user, uint256 amount);
+    event Redeemed(address indexed user, uint256 amount);
+
+    function stake() external payable {
+        require(msg.value > 0, "Need ETH to stake");
+        staked[msg.sender] += msg.value;
+        derivativeBalance[msg.sender] += msg.value;
+        emit Staked(msg.sender, msg.value);
+    }
+
+    function redeem(uint256 amount) external {
+        require(derivativeBalance[msg.sender] >= amount, "Not enough derivative");
+        derivativeBalance[msg.sender] -= amount;
+        payable(msg.sender).transfer(amount);
+        emit Redeemed(msg.sender, amount);
+    }
+}
