@@ -1,0 +1,12 @@
+import { ethers } from "ethers";
+
+const provider = new ethers.JsonRpcProvider("http://localhost:8545");
+const signer = provider.getSigner();
+
+const stakeAbi = ["function stake() payable", "function redeem(uint256 amount)"];
+const stakeContract = new ethers.Contract("0xStakeAddress", stakeAbi, signer);
+
+async function run() {
+  await stakeContract.stake({ value: ethers.parseEther("1") });
+  console.log("1 ETH staked for fETH");
+}
